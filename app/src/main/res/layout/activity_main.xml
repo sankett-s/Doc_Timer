@@ -63,6 +63,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Change Color" />
+
+        <Button
+            android:id="@+id/btnDarkMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dark Mode" />
     </LinearLayout>
 
     <!-- Floating Exit Full Screen Button (Bottom Right) -->

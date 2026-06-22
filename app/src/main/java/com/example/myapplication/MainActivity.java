@@ -20,6 +20,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtTime;
     private View controlsLayout;
     private ImageButton btnExitFS;
-    private Button btnSetTimer, btnStartPause, btnReset, btnFullScreen, btnColor;
+    private Button btnSetTimer, btnStartPause, btnReset, btnFullScreen, btnColor, btnDarkMode;
     
     private float textSize = 40f;
     private int selectedColor = Color.WHITE;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isTimerRunning = false;
     private long timeLeftInMillis = 0;
     private boolean isFullScreen = false;
+    private boolean isDark = false;
 
     private final Runnable runnable = new Runnable() {
         @Override
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         btnReset = findViewById(R.id.btnReset);
         btnFullScreen = findViewById(R.id.btnFullScreen);
         btnColor = findViewById(R.id.btnColor);
+        btnDarkMode = findViewById(R.id.btnDarkMode);
 
         // Restore state if available
         if (savedInstanceState != null) {
@@ -94,9 +97,11 @@ public class MainActivity extends AppCompatActivity {
             isTimerRunning = savedInstanceState.getBoolean("isTimerRunning", false);
             timeLeftInMillis = savedInstanceState.getLong("timeLeftInMillis", 0);
             isFullScreen = savedInstanceState.getBoolean("isFullScreen", false);
+            isDark = savedInstanceState.getBoolean("isDark", false);
 
             txtTime.setTextSize(textSize);
             txtTime.setTextColor(selectedColor);
+            btnDarkMode.setText(isDark ? "Light Mode" : "Dark Mode");
             
             if (isTimerMode) {
                 btnStartPause.setVisibility(View.VISIBLE);
@@ -139,6 +144,17 @@ public class MainActivity extends AppCompatActivity {
         btnFullScreen.setOnClickListener(v -> toggleFullScreen(true));
         btnExitFS.setOnClickListener(v -> toggleFullScreen(false));
 
+        btnDarkMode.setOnClickListener(v -> {
+            isDark = !isDark;
+            if (isDark) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                btnDarkMode.setText("Light Mode");
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                btnDarkMode.setText("Dark Mode");
+            }
+        });
+
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
             @Override
             public boolean onScale(ScaleGestureDetector detector) {
@@ -166,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putBoolean("isTimerRunning", isTimerRunning);
         outState.putLong("timeLeftInMillis", timeLeftInMillis);
         outState.putBoolean("isFullScreen", isFullScreen);
+        outState.putBoolean("isDark", isDark);
     }
 
     private void showSetTimerDialog() {
